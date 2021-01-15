@@ -4,7 +4,7 @@
 
 ![exercise0.4](./0.4_New_Note.png)
 
-### Exercise 0.5 Navigate SPA
+### Exercise 0.5 Single Page App
 
 ![exercise0.5](./0.5_Single_page_app.png)
 
