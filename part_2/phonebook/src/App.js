@@ -3,14 +3,17 @@ import Filter from './components/Filter';
 import PersonForm from './components/PersonForm';
 import Persons from './components/Persons';
 import personsService from './services/personsService'
-
+import Notification from './components/Notification';
 
 const App = () => {
   const [ persons, setPersons ] = useState([])
   const [ newName, setNewName ] = useState('')
   const [ newNumber, setNewNumber ] = useState('')
   const [ search, setSearch ] = useState('')
-
+  const [notification, setNotification] = useState({
+    message: null,
+    typeOfClass: ''
+  })
 
   useEffect(() => {
     personsService
@@ -19,6 +22,13 @@ const App = () => {
         setPersons(persons);
       })
   }, [])
+
+  const dispatchNotification = (newNotification) => {
+    setNotification(newNotification)
+    setTimeout(() => {
+      setNotification({message: null, typeOfClass: ''})
+    }, 5000)
+  }
 
   const addPerson =(event) => {
     event.preventDefault();
@@ -40,10 +50,10 @@ const App = () => {
               .then(data => {
                 // update the list only in the place we need
                 setPersons(persons.map(person => person.id !== item.id ? person : data))
-                // dispatchNotification({
-                //     message : `${newName} updated`,
-                //     typeOfClass : 'info'
-                // })
+                dispatchNotification({
+                    message : `${newName} updated`,
+                    typeOfClass : 'info'
+                })
               })
         }
         return true
@@ -58,18 +68,18 @@ const App = () => {
         setPersons(persons.concat(person));
         setNewName('');
         setNewNumber('');
-        // dispatchNotification({
-        //   message : `Added ${person.name}`,
-        //   typeOfClass : 'info'
-        // })
+        dispatchNotification({
+          message : `Added ${person.name}`,
+          typeOfClass : 'info'
+        })
       })
       .catch(error => {
         console.log(error.response.data)
-        // dispatchNotification({
-        //   // message: JSON.stringify(error.response.data),
-        //   message: `${newName} not added`,
-        //   typeOfClass: 'error'
-        // })
+        dispatchNotification({
+          // message: JSON.stringify(error.response.data),
+          message: `${newName} not added`,
+          typeOfClass: 'error'
+        })
       })
     }
 }
@@ -86,17 +96,17 @@ const App = () => {
         .deletePerson(id)
         .then(() => {
           setPersons(persons.filter(p => p.id !== id))
-          // dispatchNotification({
-          //   message : `${name} was removed`,
-          //   typeOfClass : 'info'
-          // })
+          dispatchNotification({
+            message : `${name} was removed`,
+            typeOfClass : 'info'
+          })
         })
         .catch(error => {
           console.log(error);
-          // dispatchNotification({
-          //   message: `Information of ${name} has already been removed from server`,
-          //   typeOfClass: 'error'
-          // })
+          dispatchNotification({
+            message: `Information of ${name} has already been removed from server`,
+            typeOfClass: 'error'
+          })
           setPersons(persons.filter(p => p.id !== id))
         })
 
@@ -112,6 +122,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={notification.message} className={notification.typeOfClass}/>
       <Filter  value={search} onChange={(event) => setSearch(event.target.value)}/>
       <h2>Add a new numbers</h2>
       <PersonForm
