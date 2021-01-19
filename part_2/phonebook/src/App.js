@@ -55,6 +55,17 @@ const App = () => {
                     typeOfClass : 'info'
                 })
               })
+              .catch(err => {
+                setPersons(
+                  persons.filter(person => {
+                    return person.id !== item.id;
+                  })
+                );
+                dispatchNotification({
+                  message : `Information of ${newName}  has already been removed from the server`,
+                  typeOfClass : 'info'
+                })
+              });
         }
         return true
       } else {
